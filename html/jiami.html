@@ -1,0 +1,126 @@
+<!-- jk加密算法演示 -->
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <title>加密解密工具</title>
+  <style>
+    .container {
+      max-width: 600px;
+      margin: 20px auto;
+      padding: 20px;
+      border: 1px solid #ccc;
+      border-radius: 8px;
+    }
+    textarea {
+      width: 100%;
+      height: 100px;
+      margin: 10px 0;
+      padding: 8px;
+      border: 1px solid #ddd;
+      resize: vertical;
+    }
+    button {
+      background: #007bff;
+      color: white;
+      border: none;
+      padding: 10px 20px;
+      border-radius: 4px;
+      cursor: pointer;
+      transition: background 0.3s;
+    }
+    button:hover {
+      background: #0056b3;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <textarea id="input" placeholder="输入要加密/解密的文本..."></textarea>
+		<input type="text" id="key" placeholder="密钥: 可不输入,如果加密使用秘钥,解密时必须输入" style="width: 400px;padding: 5px 6px;margin-bottom: 8px;">
+		<br>
+    <button onclick="processText(1)">加密</button>
+    <button onclick="processText(2)">解密</button>
+    <textarea id="output" placeholder="转换结果..." readonly></textarea>
+  </div>
+
+  <script>
+		let rule = [1,2,3,4,5,6,7,8,9,10] 
+    // 加密函数
+    function encrypt(str,key=false) {
+			// 构建加密规则
+			if(key) rule = Array.from(new TextEncoder().encode(key))
+			
+      // 将字符串转换为字节数组
+      const encoder = new TextEncoder();
+      let bytes = Array.from(encoder.encode(str))
+
+			let plus = false;
+			rule.map((v,i) =>{
+				if(plus){
+					bytes = bytes.slice(0,rule[i-1]).map(v1 => v1+v).concat(bytes.slice(rule[i-1]).map(v1 => v1+(bytes.length%v)))
+				  plus = false
+				}else{
+					bytes = bytes.slice(v%bytes.length).concat(bytes.slice(0, v%bytes.length))
+					plus = true
+				}
+			})
+
+      const mi = bytes.map(v => String.fromCharCode(v)).join('')
+      // return mi
+      return btoa(encodeURIComponent(mi)).replaceAll('=','')
+    }
+
+		// 解密函数
+    function decrypt(binaryStr,key=false) {
+      // 将base64字符串转换为普通字符串
+      let b63,flag = true;
+      while(flag){
+        try{
+          b63 = decodeURIComponent(atob(binaryStr))
+          flag = false
+        }catch(e){
+            binaryStr += '='
+        }
+      }
+
+      // 构建解密规则
+			if(key) rule = Array.from(new TextEncoder().encode(key))
+
+      // 将字符串转换为字节数组
+      let bytes = Uint8Array.from([...b63].map(c => c.charCodeAt(0)));
+      bytes =  Array.from(bytes)
+
+			// 初始化偏移
+			let plus = rule.length%2===0;
+
+			// 反转规则
+			rule.reverse()
+			
+			// 处理文本转换
+			rule.map((v,i) =>{
+				if(plus){
+					bytes = bytes.slice(0,rule[i+1]).map(v1 => v1-v).concat(bytes.slice(rule[i+1]).map(v1 => v1-(bytes.length%v)))
+				  plus = !plus
+				}else{
+					bytes = bytes.slice(-v%bytes.length).concat(bytes.slice(0, -v%bytes.length))
+					plus = !plus
+				}
+			})
+
+      // 将字节数组转换为字符串
+      const decoder = new TextDecoder('utf-8');
+      return decoder.decode(new Uint8Array(bytes));
+    }
+
+    // 处理文本转换
+    function processText(type) {
+      const input = document.getElementById('input').value;
+      const key = document.getElementById('key').value;
+			if(!key) rule = [1,2,3,4,5,6,7,8,9,10] 
+      let output = type ===1 ? encrypt(input,key) : decrypt(input,key);
+      document.getElementById('output').value = output;
+    }
+  </script>
+</body>
+</html>

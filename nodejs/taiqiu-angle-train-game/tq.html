@@ -1,0 +1,248 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>看球猜角度</title>
+    <style>
+        body {
+            margin: 0;
+            padding: 20px;
+            background: #2c3e50;
+            font-family: Arial, sans-serif;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            touch-action: manipulation;
+        }
+
+        #pool-table {
+            width: 230px;
+            height: 460px;
+            background: linear-gradient(to bottom, #1a6b3a, #0f4d24);
+            position: relative;
+            margin: 20px 0;
+            border: 14px solid #5d4037;
+            border-radius: 20px;
+            box-shadow: 0 10px 20px rgba(0,0,0,0.3);
+        }
+
+        /* 绘制桌边装饰线 */
+        #pool-table::before {
+            content: '';
+            position: absolute;
+            top: 5px;
+            left: 5px;
+            right: 5px;
+            bottom: 5px;
+            border: 2px solid rgba(255,255,255,0.2);
+            border-radius: 10px;
+        }
+
+        .ball {
+            width: 10px;
+            height: 10px;
+            position: absolute;
+            border-radius: 50%;
+            box-shadow: 0 3px 6px rgba(0,0,0,0.3);
+            transition: all 0.3s;
+        }
+
+        /* 白球样式 */
+        #white-ball {
+            background: #f8f9fa;
+            border: 2px solid #e0e0e0;
+        }
+
+        /* 目标球样式 */
+        #target-ball {
+            background: #e74c3c;
+            border: 2px solid #c0392b;
+        }
+
+        /* 球体高光效果 */
+        .ball::after {
+            content: '';
+            position: absolute;
+            top: 2px;
+            left: 2px;
+            width: 3px;
+            height: 3px;
+            background: rgba(255,255,255,0.6);
+            border-radius: 50%;
+        }
+
+        .options {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 15px;
+            width: 100%;
+            max-width: 300px;
+        }
+
+        .option-btn {
+            padding: 10px;
+            background: #3498db;
+            color: white;
+            border: none;
+            border-radius: 10px;
+            font-size: 18px;
+            cursor: pointer;
+            transition: all 0.3s;
+            user-select: none;
+        }
+
+        .option-btn:active {
+            transform: scale(0.95);
+        }
+
+        #result {
+            margin-top: 10px;
+            font-size: 16px;
+            color: white;
+            min-height: 22px;
+            text-align: center;
+        }
+
+        #restart {
+            margin-top: 10px;
+            padding: 12px 36px;
+            background: #27ae60;
+            color: white;
+            border: none;
+            border-radius: 25px;
+            cursor: pointer;
+            font-size: 16px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+            display: none;
+        }
+
+        /* 袋口通用样式 */
+        .pocket {
+            position: absolute;
+            width: 20px;
+            height: 20px;
+            background: #2d241f;
+            border-radius: 50%;
+            box-shadow: inset 0 3px 6px rgba(0,0,0,0.3);
+            z-index: 1;
+        }
+
+        /* 四个角袋 */
+        .pocket.corner {
+            width: 20px;
+            height: 20px;
+        }
+
+        /* 具体定位 */
+        #pocket-tl { /* 左上 */
+            left: -6px;
+            top: -6px;
+        }
+        #pocket-tr { /* 右上 */
+            right: -6px;
+            top: -6px;
+        }
+        #pocket-bl { /* 左下 */
+            left: -6px;
+            bottom: -6px;
+        }
+        #pocket-br { /* 右下 */
+            right: -6px;
+            bottom: -6px;
+        }
+
+        /* 中袋 */
+        .pocket.middle {
+            width: 40px;
+            height: 28px;
+            border-radius: 14px;
+        }
+        #pocket-mr { /* 顶中 */
+            right: -6px;
+            top: 50%;
+            transform: translateX(20%);
+        }
+        #pocket-ml { /* 底中 */
+            left: -6px;
+            top: 50%;
+            transform: translateX(-20%);
+        }
+        .active{
+            background-color: rebeccapurple;
+        }
+        #model{
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translateX(-50%) translateY(-50%);
+        }
+        #model button{
+            display: block;
+            padding: 7px 16px;
+            margin: 5px;
+        }
+
+        .simple-back {
+            display: inline-block;
+            width: 25px;
+            height: 25px;
+            border-radius: 50%;
+            background: #fff;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+            position: relative;
+            transition: 0.3s;
+        }
+
+        .simple-back::before {
+            content: '';
+            position: absolute;
+            left: 50%;
+            top: 50%;
+            width: 10px;
+            height: 10px;
+            border-left: 3px solid #333;
+            border-bottom: 3px solid #333;
+            transform: translate(-25%, -50%) rotate(45deg);
+        }
+
+        .simple-back:hover {
+            transform: translateX(-5px);
+            background: #f8f8f8;
+        }
+        #back{
+            position: absolute;
+            right: 30px;
+        }
+    </style>
+</head>
+<body>
+    <div id="back"><a href='tq.html' class="simple-back"></a></div>
+    <h3 style="color: white; text-shadow: 2px 2px 4px rgba(0,0,0,0.3);">看球猜角度</h3>
+    <div id="pool-table">
+        <!-- 球袋 -->
+        <div class="pocket corner" id="pocket-tl"></div>
+        <div class="pocket corner" id="pocket-tr"></div>
+        <div class="pocket corner" id="pocket-bl"></div>
+        <div class="pocket corner" id="pocket-br"></div>
+        <div class="pocket corner" id="pocket-mr"></div>
+        <div class="pocket corner" id="pocket-ml"></div>
+        
+        <!-- 原有白球和目标球 -->
+        <div id="white-ball" class="ball"></div>
+        <div id="target-ball" class="ball"></div>
+
+        <!-- 模式选择 -->
+        <div id="model">
+            <h4 style="color: white; text-shadow: 2px 2px 4px rgba(0,0,0,0.3);">模式选择</h4>
+            <button onclick="location.href='tq.html?type=easy'">简单</button>
+            <button onclick="location.href='tq.html?type=normal'">普通</button>
+            <button onclick="location.href='tq.html?type=hard'">困难</button>
+        </div>
+    </div>
+    <div class="options" id="options"></div>
+    <div id="result"></div>
+    <button id="restart">重新开始</button>
+    <script src="./tq.js"></script>
+</body>
+</html>

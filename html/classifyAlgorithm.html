@@ -1,0 +1,998 @@
+<!-- 十种字符串分类算法演示 -->
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>十种字符串分类算法演示</title>
+    <style>
+        :root {
+            --primary: #4e54c8;
+            --secondary: #8f94fb;
+            --accent: #ff6b6b;
+            --light: #f8f9fa;
+            --dark: #343a40;
+            --success: #20bf6b;
+            --warning: #fa8231;
+            --info: #2d98da;
+        }
+        
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+        
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            line-height: 1.6;
+            background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+            color: var(--dark);
+            padding: 20px;
+        }
+        
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+        
+        header {
+            text-align: center;
+            padding: 30px 0;
+            margin-bottom: 30px;
+        }
+        
+        h1 {
+            font-size: 2.5rem;
+            margin-bottom: 10px;
+            color: var(--primary);
+            text-shadow: 1px 1px 2px rgba(0,0,0,0.1);
+        }
+        
+        .subtitle {
+            font-size: 1.2rem;
+            color: var(--dark);
+            opacity: 0.8;
+            max-width: 800px;
+            margin: 0 auto;
+        }
+        
+        .algorithm-cards {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+            gap: 25px;
+            margin-bottom: 40px;
+        }
+        
+        .card {
+            background: white;
+            border-radius: 15px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.08);
+            overflow: hidden;
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+            display: flex;
+            flex-direction: column;
+        }
+        
+        .card:hover {
+            transform: translateY(-10px);
+            box-shadow: 0 15px 40px rgba(0,0,0,0.15);
+        }
+        
+        .card-header {
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            color: white;
+            padding: 20px;
+        }
+        
+        .card-title {
+            font-size: 1.3rem;
+            margin-bottom: 5px;
+        }
+        
+        .card-subtitle {
+            font-size: 0.85rem;
+            opacity: 0.9;
+        }
+        
+        .card-body {
+            padding: 20px;
+            flex-grow: 1;
+            display: flex;
+            flex-direction: column;
+        }
+        
+        .demo-section {
+            margin: 15px 0;
+            flex-grow: 1;
+            display: flex;
+            flex-direction: column;
+        }
+        
+        h3 {
+            margin-bottom: 10px;
+            color: var(--primary);
+            font-size: 1.1rem;
+        }
+        
+        .input-group {
+            margin-bottom: 15px;
+        }
+        
+        label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: 500;
+            font-size: 0.9rem;
+        }
+        
+        input, select, textarea, button {
+            font-family: inherit;
+            font-size: 0.95rem;
+        }
+        
+        input, select, textarea {
+            width: 100%;
+            padding: 10px 12px;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            background: #f8f9fa;
+            transition: border-color 0.3s;
+        }
+        
+        input:focus, select:focus, textarea:focus {
+            outline: none;
+            border-color: var(--primary);
+            box-shadow: 0 0 0 3px rgba(78, 84, 200, 0.2);
+        }
+        
+        button {
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            color: white;
+            border: none;
+            border-radius: 8px;
+            padding: 10px 15px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            width: 100%;
+            margin-top: auto;
+        }
+        
+        button:hover {
+            opacity: 0.9;
+            transform: translateY(-2px);
+        }
+        
+        .results {
+            background: #f8f9fa;
+            border-radius: 8px;
+            padding: 15px;
+            margin-top: 15px;
+            max-height: 250px;
+            overflow-y: auto;
+            flex-grow: 1;
+        }
+        
+        .result-group {
+            margin-bottom: 15px;
+            padding-bottom: 15px;
+            border-bottom: 1px solid #eee;
+        }
+        
+        .result-title {
+            font-weight: bold;
+            margin-bottom: 8px;
+            color: var(--primary);
+            display: flex;
+            align-items: center;
+            font-size: 0.95rem;
+        }
+        
+        .result-title::before {
+            content: "→";
+            margin-right: 8px;
+            color: var(--accent);
+        }
+        
+        .result-items {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+        }
+        
+        .result-item {
+            background: white;
+            padding: 5px 10px;
+            border-radius: 20px;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+            font-size: 0.85rem;
+        }
+        
+        .footer {
+            text-align: center;
+            padding: 20px;
+            color: var(--dark);
+            opacity: 0.7;
+            font-size: 0.9rem;
+        }
+        
+        .info-text {
+            font-size: 0.85rem;
+            color: #666;
+            margin-top: 5px;
+            font-style: italic;
+        }
+        
+        @media (max-width: 768px) {
+            .algorithm-cards {
+                grid-template-columns: 1fr;
+            }
+            
+            h1 {
+                font-size: 2rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>十种字符串分类算法演示</h1>
+            <p class="subtitle">探索多种字符串分类方法的实际应用效果，包括长度、首字母、公共子串、编辑距离、正则表达式、字符组成、字符频率、元音/辅音比例、Trie树和K-means聚类</p>
+        </header>
+        
+        <div class="algorithm-cards">
+            <!-- 1. 按长度分类 -->
+            <div class="card">
+                <div class="card-header">
+                    <h2 class="card-title">按长度分类</h2>
+                    <p class="card-subtitle">根据字符串长度分组</p>
+                </div>
+                <div class="card-body">
+                    <div class="demo-section">
+                        <h3>演示</h3>
+                        <div class="input-group">
+                            <label for="length-input">输入字符串（逗号分隔）</label>
+                            <input type="text" id="length-input" value="apple,banana,kiwi,grape,orange,pear">
+                        </div>
+                        <button onclick="runLengthClassification()">执行分类</button>
+                        <div class="results" id="length-results"></div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- 2. 按首字母分类 -->
+            <div class="card">
+                <div class="card-header">
+                    <h2 class="card-title">按首字母分类</h2>
+                    <p class="card-subtitle">根据字符串的首字母分组</p>
+                </div>
+                <div class="card-body">
+                    <div class="demo-section">
+                        <h3>演示</h3>
+                        <div class="input-group">
+                            <label for="first-letter-input">输入字符串（逗号分隔）</label>
+                            <input type="text" id="first-letter-input" value="apple,banana,apricot,blueberry,cherry,avocado">
+                        </div>
+                        <button onclick="runFirstLetterClassification()">执行分类</button>
+                        <div class="results" id="first-letter-results"></div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- 3. 按公共子串分类 -->
+            <div class="card">
+                <div class="card-header">
+                    <h2 class="card-title">按公共子串分类</h2>
+                    <p class="card-subtitle">基于最长公共子串分组</p>
+                </div>
+                <div class="card-body">
+                    <div class="demo-section">
+                        <h3>演示</h3>
+                        <div class="input-group">
+                            <label for="substr-input">输入字符串（逗号分隔）</label>
+                            <input type="text" id="substr-input" value="apple,application,appliance,banana,bandana,band">
+                        </div>
+                        <div class="input-group">
+                            <label for="min-substr-length">最小子串长度</label>
+                            <select id="min-substr-length">
+                                <option value="2">2</option>
+                                <option value="3" selected>3</option>
+                                <option value="4">4</option>
+                                <option value="5">5</option>
+                            </select>
+                        </div>
+                        <button onclick="runSubstrClassification()">执行分类</button>
+                        <div class="results" id="substr-results"></div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- 4. 按编辑距离分类 -->
+            <div class="card">
+                <div class="card-header">
+                    <h2 class="card-title">按编辑距离分类</h2>
+                    <p class="card-subtitle">基于Levenshtein距离分组</p>
+                </div>
+                <div class="card-body">
+                    <div class="demo-section">
+                        <h3>演示</h3>
+                        <div class="input-group">
+                            <label for="edit-input">输入字符串（逗号分隔）</label>
+                            <input type="text" id="edit-input" value="kitten,sitting,kitchen,mitten,written,bitten">
+                        </div>
+                        <div class="input-group">
+                            <label for="max-edit-distance">最大编辑距离</label>
+                            <select id="max-edit-distance">
+                                <option value="1">1</option>
+                                <option value="2" selected>2</option>
+                                <option value="3">3</option>
+                                <option value="4">4</option>
+                            </select>
+                        </div>
+                        <button onclick="runEditDistanceClassification()">执行分类</button>
+                        <div class="results" id="edit-results"></div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- 5. 按正则表达式分类 -->
+            <div class="card">
+                <div class="card-header">
+                    <h2 class="card-title">按正则表达式分类</h2>
+                    <p class="card-subtitle">基于预定义模式分组</p>
+                </div>
+                <div class="card-body">
+                    <div class="demo-section">
+                        <h3>演示</h3>
+                        <div class="input-group">
+                            <label for="regex-input">输入字符串（逗号分隔）</label>
+                            <input type="text" id="regex-input" value="apple@test.com,user123,555-1234,42.195,admin@site.org">
+                        </div>
+                        <div class="input-group">
+                            <label for="regex-patterns">正则模式（每行一个）</label>
+                            <textarea id="regex-patterns" rows="4">^[a-z]+@[a-z]+\.[a-z]{2,3}$  // 邮箱
+^\d{3}-\d{4}$        // 电话
+^\d+\.\d+$           // 小数
+^[a-z]+\d+$          // 字母+数字</textarea>
+                        </div>
+                        <button onclick="runRegexClassification()">执行分类</button>
+                        <div class="results" id="regex-results"></div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- 6. 按字符组成分类 -->
+            <div class="card">
+                <div class="card-header">
+                    <h2 class="card-title">按字符组成分类</h2>
+                    <p class="card-subtitle">基于唯一字符集分组</p>
+                </div>
+                <div class="card-body">
+                    <div class="demo-section">
+                        <h3>演示</h3>
+                        <div class="input-group">
+                            <label for="charset-input">输入字符串（逗号分隔）</label>
+                            <input type="text" id="charset-input" value="listen,silent,apple,elbow,below,state,taste">
+                        </div>
+                        <button onclick="runCharsetClassification()">执行分类</button>
+                        <div class="results" id="charset-results"></div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- 7. 按字符频率分类 -->
+            <div class="card">
+                <div class="card-header">
+                    <h2 class="card-title">按字符频率分类</h2>
+                    <p class="card-subtitle">基于字符出现频率分组</p>
+                </div>
+                <div class="card-body">
+                    <div class="demo-section">
+                        <h3>演示</h3>
+                        <div class="input-group">
+                            <label for="freq-input">输入字符串（逗号分隔）</label>
+                            <input type="text" id="freq-input" value="listen,silent,apple,banana,grape,paper">
+                        </div>
+                        <p class="info-text">注意：此算法区分大小写</p>
+                        <button onclick="runFrequencyClassification()">执行分类</button>
+                        <div class="results" id="freq-results"></div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- 8. 按元音/辅音比例分类 -->
+            <div class="card">
+                <div class="card-header">
+                    <h2 class="card-title">按元音/辅音比例分类</h2>
+                    <p class="card-subtitle">基于元音字母占比分组</p>
+                </div>
+                <div class="card-body">
+                    <div class="demo-section">
+                        <h3>演示</h3>
+                        <div class="input-group">
+                            <label for="vowel-input">输入字符串（逗号分隔）</label>
+                            <input type="text" id="vowel-input" value="apple,banana,rhythm,sky,education,algorithm">
+                        </div>
+                        <button onclick="runVowelClassification()">执行分类</button>
+                        <div class="results" id="vowel-results"></div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- 9. 使用Trie树分类 -->
+            <div class="card">
+                <div class="card-header">
+                    <h2 class="card-title">Trie树分类</h2>
+                    <p class="card-subtitle">基于公共前缀分组</p>
+                </div>
+                <div class="card-body">
+                    <div class="demo-section">
+                        <h3>演示</h3>
+                        <div class="input-group">
+                            <label for="trie-input">输入字符串（逗号分隔）</label>
+                            <input type="text" id="trie-input" value="apple,app,application,ban,banana,band,car,cart">
+                        </div>
+                        <button onclick="runTrieClassification()">执行分类</button>
+                        <div class="results" id="trie-results"></div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- 10. 使用K-means聚类 -->
+            <div class="card">
+                <div class="card-header">
+                    <h2 class="card-title">K-means聚类分类</h2>
+                    <p class="card-subtitle">基于字符向量聚类</p>
+                </div>
+                <div class="card-body">
+                    <div class="demo-section">
+                        <h3>演示</h3>
+                        <div class="input-group">
+                            <label for="kmeans-input">输入字符串（逗号分隔）</label>
+                            <input type="text" id="kmeans-input" value="apple,banana,grape,carrot,broccoli,tomato,potato">
+                        </div>
+                        <div class="input-group">
+                            <label for="k-clusters">聚类数量 (k)</label>
+                            <select id="k-clusters">
+                                <option value="2">2</option>
+                                <option value="3" selected>3</option>
+                                <option value="4">4</option>
+                            </select>
+                        </div>
+                        <button onclick="runKMeansClassification()">执行分类</button>
+                        <div class="results" id="kmeans-results"></div>
+                        <p class="info-text">注意：算法使用字符频率作为特征向量</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="footer">
+            <p>十种字符串分类算法演示 | 展示了多种字符串处理技术的实际应用</p>
+        </div>
+    </div>
+
+    <script>
+        // 1. 按长度分类
+        function runLengthClassification() {
+            const input = document.getElementById('length-input').value;
+            const strings = input.split(',').map(s => s.trim()).filter(s => s);
+            
+            const groups = {};
+            strings.forEach(str => {
+                const len = str.length;
+                if (!groups[len]) groups[len] = [];
+                groups[len].push(str);
+            });
+            
+            displayResults('length-results', groups);
+        }
+        
+        // 2. 按首字母分类
+        function runFirstLetterClassification() {
+            const input = document.getElementById('first-letter-input').value;
+            const strings = input.split(',').map(s => s.trim()).filter(s => s);
+            
+            const groups = {};
+            strings.forEach(str => {
+                if (str.length === 0) return;
+                const first = str[0].toUpperCase();
+                if (!groups[first]) groups[first] = [];
+                groups[first].push(str);
+            });
+            
+            displayResults('first-letter-results', groups);
+        }
+        
+        // 3. 按公共子串分类
+        function runSubstrClassification() {
+            const input = document.getElementById('substr-input').value;
+            const strings = input.split(',').map(s => s.trim()).filter(s => s);
+            const minLength = parseInt(document.getElementById('min-substr-length').value);
+            
+            // 计算最长公共子串
+            function longestCommonSubstring(a, b) {
+                let maxLen = 0;
+                let endIndex = 0;
+                const dp = Array(a.length + 1).fill().map(() => Array(b.length + 1).fill(0));
+                
+                for (let i = 1; i <= a.length; i++) {
+                    for (let j = 1; j <= b.length; j++) {
+                        if (a[i-1] === b[j-1]) {
+                            dp[i][j] = dp[i-1][j-1] + 1;
+                            if (dp[i][j] > maxLen) {
+                                maxLen = dp[i][j];
+                                endIndex = i - 1;
+                            }
+                        }
+                    }
+                }
+                
+                return a.substring(endIndex - maxLen + 1, endIndex + 1);
+            }
+            
+            // 分类逻辑
+            const groups = [];
+            const used = new Set();
+            
+            for (let i = 0; i < strings.length; i++) {
+                if (used.has(i)) continue;
+                
+                const group = [strings[i]];
+                used.add(i);
+                
+                for (let j = i + 1; j < strings.length; j++) {
+                    if (used.has(j)) continue;
+                    
+                    const lcs = longestCommonSubstring(strings[i], strings[j]);
+                    if (lcs.length >= minLength) {
+                        group.push(strings[j]);
+                        used.add(j);
+                    }
+                }
+                
+                groups.push(group);
+            }
+            
+            // 格式化结果
+            const resultObj = {};
+            groups.forEach((group, i) => {
+                const lcs = group.length > 1 ? 
+                    longestCommonSubstring(group[0], group[1]) : 
+                    group[0].substring(0, minLength);
+                resultObj[`组${i+1} (公共子串: "${lcs}")`] = group;
+            });
+            
+            displayResults('substr-results', resultObj);
+        }
+        
+        // 4. 按编辑距离分类
+        function runEditDistanceClassification() {
+            const input = document.getElementById('edit-input').value;
+            const strings = input.split(',').map(s => s.trim()).filter(s => s);
+            const maxDistance = parseInt(document.getElementById('max-edit-distance').value);
+            
+            // 计算编辑距离
+            function levenshteinDistance(a, b) {
+                const dp = Array(a.length + 1).fill().map(() => Array(b.length + 1).fill(0));
+                
+                for (let i = 0; i <= a.length; i++) dp[i][0] = i;
+                for (let j = 0; j <= b.length; j++) dp[0][j] = j;
+                
+                for (let i = 1; i <= a.length; i++) {
+                    for (let j = 1; j <= b.length; j++) {
+                        const cost = a[i-1] === b[j-1] ? 0 : 1;
+                        dp[i][j] = Math.min(
+                            dp[i-1][j] + 1,
+                            dp[i][j-1] + 1,
+                            dp[i-1][j-1] + cost
+                        );
+                    }
+                }
+                
+                return dp[a.length][b.length];
+            }
+            
+            // 分类逻辑
+            const groups = [];
+            const used = new Set();
+            
+            for (let i = 0; i < strings.length; i++) {
+                if (used.has(i)) continue;
+                
+                const group = [strings[i]];
+                used.add(i);
+                
+                for (let j = i + 1; j < strings.length; j++) {
+                    if (used.has(j)) continue;
+                    
+                    if (levenshteinDistance(strings[i], strings[j]) <= maxDistance) {
+                        group.push(strings[j]);
+                        used.add(j);
+                    }
+                }
+                
+                groups.push(group);
+            }
+            
+            // 格式化结果
+            const resultObj = {};
+            groups.forEach((group, i) => {
+                resultObj[`组${i+1} (中心词: "${group[0]}")`] = group;
+            });
+            
+            displayResults('edit-results', resultObj);
+        }
+        
+        // 5. 按正则表达式分类
+        function runRegexClassification() {
+            const input = document.getElementById('regex-input').value;
+            const strings = input.split(',').map(s => s.trim()).filter(s => s);
+            const patternsText = document.getElementById('regex-patterns').value;
+            
+            // 提取正则表达式和描述
+            const patternLines = patternsText.split('\n').filter(line => line.trim());
+            const patterns = [];
+            
+            patternLines.forEach(line => {
+                const parts = line.split('//').map(p => p.trim());
+                const regex = parts[0];
+                const description = parts[1] || '未命名模式';
+                patterns.push({ regex, description });
+            });
+            
+            // 分类逻辑
+            const groups = {};
+            patterns.forEach(p => {
+                groups[p.description] = [];
+            });
+            groups['其他'] = [];
+            
+            strings.forEach(str => {
+                let matched = false;
+                for (const p of patterns) {
+                    try {
+                        const regex = new RegExp(p.regex);
+                        if (regex.test(str)) {
+                            groups[p.description].push(str);
+                            matched = true;
+                            break;
+                        }
+                    } catch (e) {
+                        console.error(`正则表达式错误: ${p.regex}`, e);
+                    }
+                }
+                
+                if (!matched) {
+                    groups['其他'].push(str);
+                }
+            });
+            
+            displayResults('regex-results', groups);
+        }
+        
+        // 6. 按字符组成分类
+        function runCharsetClassification() {
+            const input = document.getElementById('charset-input').value;
+            const strings = input.split(',').map(s => s.trim()).filter(s => s);
+            
+            const groups = {};
+            strings.forEach(str => {
+                // 创建字符集签名
+                const signature = [...new Set(str.split(''))].sort().join('');
+                
+                if (!groups[signature]) groups[signature] = [];
+                groups[signature].push(str);
+            });
+            
+            // 重命名键为更友好的格式
+            const renamedGroups = {};
+            Object.keys(groups).forEach((key, i) => {
+                renamedGroups[`字符集${i+1}: [${key}]`] = groups[key];
+            });
+            
+            displayResults('charset-results', renamedGroups);
+        }
+        
+        // 7. 按字符频率分类
+        function runFrequencyClassification() {
+            const input = document.getElementById('freq-input').value;
+            const strings = input.split(',').map(s => s.trim()).filter(s => s);
+            
+            const groups = {};
+            strings.forEach(str => {
+                // 创建字符频率签名
+                const freqMap = {};
+                for (const char of str) {
+                    freqMap[char] = (freqMap[char] || 0) + 1;
+                }
+                
+                // 转换为可比较的字符串
+                const signature = Object.entries(freqMap)
+                    .sort((a, b) => a[0].localeCompare(b[0]))
+                    .map(([char, count]) => `${char}:${count}`)
+                    .join(',');
+                
+                if (!groups[signature]) groups[signature] = [];
+                groups[signature].push(str);
+            });
+            
+            // 重命名键为更友好的格式
+            const renamedGroups = {};
+            Object.keys(groups).forEach((key, i) => {
+                renamedGroups[`频率模式${i+1}`] = groups[key];
+            });
+            
+            displayResults('freq-results', renamedGroups);
+        }
+        
+        // 8. 按元音/辅音比例分类
+        function runVowelClassification() {
+            const input = document.getElementById('vowel-input').value;
+            const strings = input.split(',').map(s => s.trim()).filter(s => s);
+            
+            const groups = {
+                high: [], // >0.5
+                medium: [], // 0.3-0.5
+                low: [] // <0.3
+            };
+            
+            const vowels = 'aeiouAEIOU';
+            
+            strings.forEach(str => {
+                let vowelCount = 0;
+                let consonantCount = 0;
+                
+                for (const char of str) {
+                    if (/[a-zA-Z]/.test(char)) {
+                        if (vowels.includes(char)) {
+                            vowelCount++;
+                        } else {
+                            consonantCount++;
+                        }
+                    }
+                }
+                
+                const totalLetters = vowelCount + consonantCount;
+                const ratio = totalLetters > 0 ? vowelCount / totalLetters : 0;
+                
+                if (ratio > 0.5) groups.high.push(str);
+                else if (ratio >= 0.3) groups.medium.push(str);
+                else groups.low.push(str);
+            });
+            
+            // 重命名键
+            const renamedGroups = {
+                '高元音比例 (>50%)': groups.high,
+                '中元音比例 (30%-50%)': groups.medium,
+                '低元音比例 (<30%)': groups.low
+            };
+            
+            displayResults('vowel-results', renamedGroups);
+        }
+        
+        // 9. Trie树分类
+        function runTrieClassification() {
+            const input = document.getElementById('trie-input').value;
+            const strings = input.split(',').map(s => s.trim()).filter(s => s);
+            
+            // Trie节点类
+            class TrieNode {
+                constructor() {
+                    this.children = {};
+                    this.isEndOfWord = false;
+                    this.prefixWords = []; // 存储所有具有当前前缀的单词
+                }
+            }
+            
+            // 构建Trie树
+            const root = new TrieNode();
+            for (let i = 0; i < strings.length; i++) {
+                const word = strings[i];
+                let node = root;
+                
+                // 根节点包含所有单词
+                node.prefixWords.push(word);
+                
+                for (const char of word) {
+                    if (!node.children[char]) {
+                        node.children[char] = new TrieNode();
+                    }
+                    node = node.children[char];
+                    // 每个节点存储所有具有当前前缀的单词
+                    node.prefixWords.push(word);
+                }
+                
+                node.isEndOfWord = true;
+            }
+            
+            // 从Trie树中提取分组
+            const groups = {};
+            const visited = new Set();
+            
+            function traverse(node, prefix) {
+                // 仅当节点有多个单词且前缀长度大于0时才作为分组
+                if (prefix.length > 0 && node.prefixWords.length > 1) {
+                    // 过滤掉已经处理过的单词
+                    const ungrouped = node.prefixWords.filter(word => !visited.has(word));
+                    
+                    if (ungrouped.length > 0) {
+                        groups[`前缀: "${prefix}"`] = ungrouped;
+                        ungrouped.forEach(word => visited.add(word));
+                    }
+                }
+                
+                // 递归遍历子节点
+                for (const [char, childNode] of Object.entries(node.children)) {
+                    traverse(childNode, prefix + char);
+                }
+            }
+            
+            // 开始遍历
+            traverse(root, '');
+            
+            // 添加未分组的项
+            const ungrouped = strings.filter(word => !visited.has(word));
+            if (ungrouped.length > 0) {
+                groups['未分组'] = ungrouped;
+            }
+            
+            displayResults('trie-results', groups);
+        }
+        
+        // 10. K-means聚类分类
+        function runKMeansClassification() {
+            const input = document.getElementById('kmeans-input').value;
+            const strings = input.split(',').map(s => s.trim()).filter(s => s);
+            const k = parseInt(document.getElementById('k-clusters').value);
+            
+            // 将字符串转换为数值向量（使用字符频率）
+            const vectors = strings.map(str => {
+                const vector = Array(26).fill(0);
+                const lowerStr = str.toLowerCase();
+                for (const char of lowerStr) {
+                    const code = char.charCodeAt(0) - 97;
+                    if (code >= 0 && code < 26) {
+                        vector[code]++;
+                    }
+                }
+                // 归一化
+                const sum = vector.reduce((acc, val) => acc + val, 0) || 1;
+                return vector.map(val => val / sum);
+            });
+            
+            // 欧几里得距离
+            function euclideanDistance(a, b) {
+                let sum = 0;
+                for (let i = 0; i < a.length; i++) {
+                    sum += Math.pow(a[i] - b[i], 2);
+                }
+                return Math.sqrt(sum);
+            }
+            
+            // 初始化质心
+            let centroids = [];
+            const indices = [];
+            while (indices.length < k) {
+                const randomIndex = Math.floor(Math.random() * vectors.length);
+                if (!indices.includes(randomIndex)) {
+                    indices.push(randomIndex);
+                    centroids.push([...vectors[randomIndex]]);
+                }
+            }
+            
+            let clusters = Array(k).fill().map(() => []);
+            let changed = true;
+            let iterations = 0;
+            
+            // K-means算法（最多迭代10次）
+            while (changed && iterations < 10) {
+                changed = false;
+                const newClusters = Array(k).fill().map(() => []);
+                
+                // 分配点到最近的质心
+                for (let i = 0; i < vectors.length; i++) {
+                    let minDist = Infinity;
+                    let clusterIndex = -1;
+                    
+                    for (let j = 0; j < centroids.length; j++) {
+                        const dist = euclideanDistance(vectors[i], centroids[j]);
+                        if (dist < minDist) {
+                            minDist = dist;
+                            clusterIndex = j;
+                        }
+                    }
+                    
+                    newClusters[clusterIndex].push(i);
+                }
+                
+                // 检查是否发生变化
+                if (JSON.stringify(clusters) !== JSON.stringify(newClusters)) {
+                    changed = true;
+                    clusters = newClusters;
+                }
+                
+                // 更新质心
+                for (let j = 0; j < k; j++) {
+                    if (clusters[j].length > 0) {
+                        const newCentroid = Array(26).fill(0);
+                        for (const idx of clusters[j]) {
+                            for (let d = 0; d < 26; d++) {
+                                newCentroid[d] += vectors[idx][d];
+                            }
+                        }
+                        for (let d = 0; d < 26; d++) {
+                            newCentroid[d] /= clusters[j].length;
+                        }
+                        centroids[j] = newCentroid;
+                    }
+                }
+                
+                iterations++;
+            }
+            
+            // 将索引转换为实际字符串
+            const resultGroups = {};
+            clusters.forEach((cluster, idx) => {
+                if (cluster.length > 0) {
+                    const clusterStrings = cluster.map(i => strings[i]);
+                    resultGroups[`聚类 ${idx + 1} (${clusterStrings.length}项)`] = clusterStrings;
+                }
+            });
+            
+            displayResults('kmeans-results', resultGroups);
+        }
+        
+        // 显示结果的通用函数
+        function displayResults(elementId, groups) {
+            const container = document.getElementById(elementId);
+            container.innerHTML = '';
+            
+            for (const [groupName, items] of Object.entries(groups)) {
+                if (items.length === 0) continue;
+                
+                const groupDiv = document.createElement('div');
+                groupDiv.className = 'result-group';
+                
+                const title = document.createElement('div');
+                title.className = 'result-title';
+                title.textContent = `${groupName} (${items.length}项)`;
+                
+                const itemsDiv = document.createElement('div');
+                itemsDiv.className = 'result-items';
+                
+                items.forEach(item => {
+                    const itemSpan = document.createElement('span');
+                    itemSpan.className = 'result-item';
+                    itemSpan.textContent = item;
+                    itemsDiv.appendChild(itemSpan);
+                });
+                
+                groupDiv.appendChild(title);
+                groupDiv.appendChild(itemsDiv);
+                container.appendChild(groupDiv);
+            }
+            
+            if (container.children.length === 0) {
+                container.innerHTML = '<div class="result-group">没有找到匹配项</div>';
+            }
+        }
+        
+        // 初始化页面时运行一次演示
+        window.onload = function() {
+            runLengthClassification();
+            runFirstLetterClassification();
+            runSubstrClassification();
+            runEditDistanceClassification();
+            runRegexClassification();
+            runCharsetClassification();
+            runFrequencyClassification();
+            runVowelClassification();
+            runTrieClassification();
+            runKMeansClassification();
+        };
+    </script>
+</body>
+</html>
