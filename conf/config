@@ -1,0 +1,59 @@
+# ssh config配置文件
+# 生成通讯钥匙串 ssh-keygen -t rsa -C 'geekli@163.com'
+Host 163
+  HostKeyAlgorithms +ssh-rsa
+  PubkeyAcceptedKeyTypes +ssh-rsa
+  HostName 192.168.200.128
+  User root
+Host ali
+  HostName 101.37.161.245
+  User root
+
+Host ali1
+  HostName 120.55.170.164
+  User root
+  IdentityFile ~/.ssh/id_rsa
+
+Host ali.ssp.jumper
+  User deployer
+  HostName 39.101.196.103
+Host xyali-sdk-prod
+  User deployer
+  HostName 172.31.0.197
+  ProxyCommand ssh ali.ssp.jumper -W %h:%p
+Host nginx
+  User deployer
+  HostName 172.31.0.186
+  ProxyCommand ssh ali.ssp.jumper -W %h:%p
+Host wk1
+  User deployer
+  HostName 172.31.0.45
+  ProxyCommand ssh ali.ssp.jumper -W %h:%p
+Host wk0
+  User deployer
+  HostName 172.31.0.110
+  ProxyCommand ssh ali.ssp.jumper -W %h:%p
+Host xyali-operator-prod
+  User deployer
+  HostName 172.31.0.135
+  ProxyCommand ssh ali.ssp.jumper -W %h:%p
+Host ali.ssp-prod
+  User deployer
+  HostName 172.31.0.195
+  ProxyCommand ssh ali.ssp.jumper -W %h:%p
+Host c1
+  User genyonghu
+  HostName 172.31.0.7
+  ProxyCommand ssh ali.ssp.jumper -W %h:%p
+Host c2
+  User genyonghu
+  HostName 172.31.0.8
+  ProxyCommand ssh ali.ssp.jumper -W %h:%p
+Host xyali-ssp-stage
+  User deployer
+  HostName 172.31.0.185
+  ProxyCommand ssh ali.ssp.jumper -W %h:%p
+Host hk
+  HostName 47.56.137.104
+  User deployer
+  IdentityFile ~/.ssh/hk_rsa

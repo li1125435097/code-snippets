@@ -1,0 +1,19 @@
+[package]
+name = "rust-sum-server"
+version = "0.1.0"
+edition = "2021"
+
+[dependencies]
+tonic = "0.10"  # 更新到最新版本
+prost = "0.12"
+tokio = { version = "1", features = ["macros", "rt-multi-thread"] }
+num-bigint = "0.4"
+num-traits = "0.2"
+
+[build-dependencies]
+tonic-build = "0.10"  # 更新到匹配版本
+
+[profile.release]
+opt-level = 3 # 0-3，3为最高优化
+lto = true # 链接时优化
+codegen-units = 1 # 减少并行编译单元提高优化

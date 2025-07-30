@@ -1,0 +1,42 @@
+version: '3'
+services:
+  db:
+    image: mysql:latest
+    container_name: mysqlService
+    mem_limit: 512m
+    environment:
+      MYSQL_ROOT_PASSWORD: Langchao2018
+    volumes:
+      - /home/deploy/dockerVolume/my.cnf:/etc/my.cnf
+      - /home/deploy/dockerVolume/mysql/mysql:/var/lib/mysql
+    ports:
+      - "3306:3306"
+    restart: always
+  redis:
+    image: redis:latest  # 使用最新版本的 Redis 镜像
+    container_name: redisService
+    mem_limit: 256m
+    restart: always
+    ports:
+      - "6379:6379"  # 将主机的 6379 端口映射到容器的 6379 端口
+    volumes:
+      - /home/deploy/dockerVolume/redis:/data  # 数据持久化存储
+    environment:
+      - ALLOW_EMPTY_PASSWORD=yes  # 允许空密码（仅用于开发环境）
+  lightserver:
+    image: light-server:latest  # 使用最新版本的 Redis 镜像
+    container_name: lightService
+    mem_limit: 256m
+    restart: always
+    ports:
+      - "3000:3000"  # 将主机的 6379 端口映射到容器的 6379 端口
+  rabbitmq:
+    image: rabbitmq:management-alpine
+    ports:
+      - "5672:5672"  # AMQP协议端口
+      - "15672:15672"  # RabbitMQ Management插件端口
+    volumes:
+      - /home/deploy/dockerVolume/rabbitmq:/var/lib/rabbitmq  # 挂载数据卷以持久化数据
+    environment:
+      - RABBITMQ_DEFAULT_USER=admin
+      - RABBITMQ_DEFAULT_PASS=111222

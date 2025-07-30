@@ -1,0 +1,16 @@
+syntax = "proto3";
+
+package sum;
+option go_package = "generated/sum"; // 替换为你的Go包路径
+
+service SumService {
+  rpc Sum (SumRequest) returns (SumResponse);
+}
+
+message SumRequest {
+  repeated string numbers = 1; // 字符串形式支持大整数
+}
+
+message SumResponse {
+  string result = 1;
+}

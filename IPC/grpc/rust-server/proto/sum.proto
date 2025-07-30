@@ -1,0 +1,15 @@
+syntax = "proto3";
+
+package sum;
+
+service SumService {
+  rpc Sum (SumRequest) returns (SumResponse);
+}
+
+message SumRequest {
+  repeated string numbers = 1; // 字符串形式支持大整数
+}
+
+message SumResponse {
+  string result = 1;
+}

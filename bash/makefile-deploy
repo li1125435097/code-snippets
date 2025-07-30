@@ -1,0 +1,38 @@
+h=120.55.170.164
+info:
+	# deploy ${h}
+
+vadd:
+	# 版本升级开始
+	ssh ${h} 'cd /home/dev/code/server && npm version patch && cp -r ./dist/config ./'
+	# 版本升级结束
+
+kill-pm2:
+	# 关闭 pm2 进程开始
+	ssh ${h} 'pm2 l && pm2 del all'
+	# 关闭 pm2 进程结束
+
+copy:
+	# copy code 开始
+	rm -fr ./dist/config
+	ssh ${h} 'cd /home/dev/code/server && rm -fr dist && scp -r 192.168.28.10:/home/dev/code/dist ./'
+	ssh ${h} 'cd /home/dev/code/server && mv config ./dist'
+	# copy code 结束	
+
+build:
+	# 打包开始
+	rm -fr dist && npm run build
+	# 打包结束
+
+prod:
+	# 开发环境启动开始
+	ssh ${h} 'cd /home/dev/code/server && npm run start'
+	# 开发环境启动结束
+
+deploy:
+	make vadd
+	make build
+	make kill-pm2
+	make copy
+	make prod
+	date

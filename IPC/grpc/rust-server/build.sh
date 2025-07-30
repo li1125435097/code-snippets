@@ -1,0 +1,1 @@
+echo '把buildlib的文件改成build即可，运行时报错把这个文件改成buildlib就行了'

@@ -1,0 +1,32 @@
+h=130.55.17.52
+info:
+	# deploy ${h}
+
+copy:
+	# copy code 开始
+	ssh ${h} 'cd /www/nginxViews/client && scp -r 192.168.20.10:/home/dev/code/client/dist.tgz ./ && rm -fr dist'
+	ssh ${h} 'cd /www/nginxViews/client && tar -zxf dist.tgz'
+	# copy code 结束	
+
+build1:
+	# 编译开始
+	npm run build
+	# 编译结束
+
+package1:
+	# 打包开始
+	tar -zcf dist.tgz dist
+	# 打包结束
+
+dfile:
+	# 删除开始
+	ssh ${h} 'cd /www/nginxViews/client && rm -fr dist.tgz'
+	rm -fr dist.tgz
+	# 删除结束
+
+deploy:
+        make build1
+	make package1
+	make copy
+	make dfile
+	date

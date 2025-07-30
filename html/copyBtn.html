@@ -1,0 +1,267 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>开发知识库</title>
+    <link href="https://cdn.bootcdn.net/ajax/libs/twitter-bootstrap/5.2.3/css/bootstrap.min.css" rel="stylesheet">
+    <style>
+      ::-webkit-scrollbar {width: 8px;}
+      ::-webkit-scrollbar-thumb {background-color: #bcb7ca;border-radius: 10px;}
+      ::-webkit-scrollbar-track { background-color: #f0f8fe; border-radius: 10px; }
+      body{background-image: url('https://img0.baidu.com/it/u=1752608635,1410082355&fm=253&fmt=auto&app=138&f=JPEG?w=500&h=500');}
+      li{background-image: url('https://img1.baidu.com/it/u=3205873216,2045769288&fm=253&fmt=auto&app=138&f=JPEG?w=500&h=750');background-size:contain;}
+    </style>
+</head>
+<body>
+    <div class="container " >
+        <nav class="navbar navbar-expand-lg bg-body-tertiary">
+            <div class="container-fluid">
+              <a class="navbar-brand" href="#">开发知识库</a>
+              <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+                <span class="navbar-toggler-icon"></span>
+              </button>
+              <button class="btn btn-outline-info me-2" style="display: none;" id="zeroAdd" onclick="add()" data-bs-toggle="modal" data-bs-target="#dialog">新增</button>
+              <div class="collapse navbar-collapse  justify-content-end" id="navbarSupportedContent">
+                <div class="d-flex">
+                  <input class="form-control me-2" type="search" id="search" onkeypress="search(1)" placeholder="请输入关键字">
+                  <button class="btn btn-outline-success" style="width: 80px;" type="button" onclick="search()">搜索</button>
+                </div>
+              </div>
+            </div>
+          </nav>
+
+          <ol class="list-group list-group-numbered" id="table" style="height:calc(100vh - 70px);overflow-y: auto;"></ol>
+
+          <!-- 新增对话框 -->
+          <div class="modal fade" id="dialog" tabindex="-1" aria-labelledby="dialogLabel" aria-hidden="true">
+            <div class="modal-dialog">
+              <div class="modal-content">
+                <div class="modal-header">
+                  <h1 class="modal-title fs-5" id="dialogLabel">新增</h1>
+                  <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="mb-3 d-flex">
+                      <label for="title" class="col-form-label me-3" style="word-break: keep-all;">标题</label>
+                      <input type="text" class  ="form-control" id="title">
+                    </div>
+                    <div class="mb-3 d-flex">
+                      <label for="txt" class="col-form-label me-3" style="word-break: keep-all;">内容</label>
+                      <input type="text" class="form-control" id="txt">
+                    </div>
+                </div>
+                <div class="modal-footer">
+                  <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">关闭</button>
+                  <button type="button" class="btn btn-primary" onclick="submit()">提交</button>
+                </div>
+              </div>
+            </div>
+          </div>
+        
+    </div>
+    
+    <script src="https://cdn.bootcdn.net/ajax/libs/jquery/1.10.2/jquery.min.js"></script>
+    <script src="https://cdn.bootcdn.net/ajax/libs/twitter-bootstrap/5.2.3/js/bootstrap.min.js"></script>
+    <script>
+        let listData = []
+        let dialogEle
+        let titleEle
+        let txtEle
+        let dialogLabelEle
+        let dialogType
+        let editData = {}
+        const l = console.log
+        
+        $(function(){
+          Array(100).fill(1).map(v=>{ listData.push({title:Math.random().toString(36).slice(3,8),txt:Math.random()*128 & 127 }) })
+          init()
+        })
+
+        async function init(){
+          const result =  await request('list')
+          listData = result.data
+          RenderTable(listData)
+          dialogEle = $('#dialog')
+          titleEle = $('#title')
+          txtEle = $('#txt')
+          dialogLabelEle = $('#dialogLabel')
+        }
+
+
+        function request(type, param){
+          return {data:listData}    // 以下时我用后端接口实现的api，后端同学可用接口i实现以下方法，前端同学浏览器的localStorage对象实现数据增删该查功能
+          if(type === 'list') return $.get('/api/mylist')
+          if(type === 'add') return $.post('/api/myadd',param)
+          if(type === 'del') return $.post('/api/mydel',param)
+          if(type === 'edit') return $.post('/api/myedit',param)
+        }
+
+        // 表格渲染
+        function RenderTable(data){
+          if(data.length) $('#zeroAdd').hide()
+          else $('#zeroAdd').show()
+            let html = []
+            data.map((v,i) => {
+                html.push(`
+                <li class="list-group-item d-flex justify-content-between align-items-start text-success">
+                    <div class="ms-2 me-auto"> <div class="fw-bold">${v.title}</div>${v.txt}</div>
+                    <button class="btn btn-outline-info me-2" onclick="add()" data-bs-toggle="modal" data-bs-target="#dialog">新增</button>
+                    <button class="btn btn-outline-warning me-2" onclick="edit(${i})" data-bs-toggle="modal" data-bs-target="#dialog">编辑</button>
+                    <button class="btn btn-outline-danger me-2" onclick="del(${i})">删除</button>
+                    <button class="btn btn-outline-primary" onclick="copy(${i})">复制</button>
+                </li>
+                `)
+            })
+            $('#table').html(html.join(""))
+        }
+
+        // 搜索函数
+        function search(keydown){
+            const key = $('#search').val()
+            if(event.code !== 'Enter' && event.type === 'keypress') return
+            if(!key) return RenderTable(listData)
+            const data = listData.filter(v => JSON.stringify(v).match(key))
+            if(data.length) RenderTable(data)
+        }
+        
+        // 新增函数
+        function add(){
+          dialogType = 'add'
+          titleEle.val('')
+          txtEle.val('')
+          dialogLabelEle.text('新增')
+        }
+
+        // 编辑函数
+        function edit(index){
+          dialogType = 'edit'
+          const { title, txt } = listData[index]
+          editData = { title, txt }
+          titleEle.val(title)
+          txtEle.val(txt)
+          dialogLabelEle.text('编辑')
+        }
+
+        // 删除函数
+        async function del(index){
+          let payload = listData[index]
+          if(confirm(`确认删除 ${payload.title}吗？`)){
+            const result = await request('del',payload) 
+            listData = result.data
+            RenderTable(listData)
+          }
+        }      
+
+        // 新增编辑提交函数
+        async function submit(){
+          const title = $('#title').val().trim()
+          const txt = $('#txt').val().trim()
+
+          if(!title) return box.danger('请填写标题！！！')
+          if(!txt) return box.danger('请填写内容！！！')
+
+          let payload = dialogType === 'add' ? {title,txt} : {pattern:editData,data:{title,txt}}
+          
+          const result = await request(dialogType,payload)
+          listData = result.data
+          RenderTable(listData)
+          box.success(dialogType === 'add' ? '新增成功' : '编辑成功')
+          hideDialog()
+        }
+
+        // 新增对话框隐藏函数
+        function hideDialog(){
+          dialogEle.hide()
+          $('.modal-backdrop.fade.show').remove()
+        }
+
+        // 复制
+        function copy(index){
+          const data = listData[index]
+          try {
+            navigator.clipboard.writeText(data.txt)
+          } catch (error) {
+            let textarea = document.createElement('textarea')
+            // textarea.value = Math.random()*100 & 15
+            textarea.value = data.txt
+            textarea.style = 'position:absolute;width:0;height:0;left:-10000px'
+            document.body.append(textarea)
+            textarea.select()
+            document.execCommand('copy')
+            document.body.removeChild(textarea)
+          } finally{
+            box.success('复制成功！')
+          }
+        }
+
+        /**
+         * 
+         * @param {any} text required  提示框内容
+         * @param {string} mystyle optional 自定义提示框样式
+         * @param {boolean} initiative optional 点击提示框以外区域是否立刻关闭提示框
+         * @param {float} delay optional 提示框停留时间
+         * @param {boolean} scroll optional 提示框显示时页面是否可滚动
+         * @param {float} animation optional 提示框入场动画时间 
+         * @param {float} opacity optional 提示框显示透明度
+         */
+        function toast(text,mystyle="",initiative=true,delay=1,scroll=false,animation=0.5,opacity=0.8){
+          let scrollY = window.scrollY
+          let style = `
+            background-color:black;
+            color:white;
+            font-size:12px;
+            font-weight:300;
+            width:fit-content;
+            padding:5px 15px;
+            border-radius: 3px;
+            position: absolute;
+            opacity: 0;
+            top: calc(50vh + ${scrollY}px);
+            left: 50vw;
+            transform:translate(-50%,-50%);
+            outline:none;				
+            transition-duration:0.5s;
+            transition-timing-function:ease-in;
+            z-index:1111111111;
+          `
+          style += mystyle
+          let toasts = document.querySelectorAll('.mytoast')
+          Array.from(toasts).map(v=>v.style.top = `calc(50vh + ${-10+v.style.top.match(/\d+px/g)[0].slice(0,-2)}px)`)
+          
+          // 标签构造
+          let ele = document.createElement('div')
+          ele.className = 'mytoast'
+          ele.style = style
+          ele.textContent = text
+          ele.tabIndex = 1e7
+          
+          // 标签渲染
+          document.body.appendChild(ele)
+          ele.focus()
+          
+          // 根据参数定制功能
+          !scroll && (document.body.style.overflow = 'hidden')								   // 弹窗期间页面是否可滚动
+          initiative && (ele.onblur = function(){remove();clearTimeout(timer)})	 // 点击其他区域是否关闭提示
+          
+          // 提示框渲染成功后操作
+          ele.style.opacity = opacity				// 渲染入场动画
+          let timer = setTimeout(function(){remove()},delay*1000)  // 默认1秒后关闭弹窗
+          
+          // 关闭弹窗函数
+          function remove(time){
+            ele.style.opacity = 0;
+            setTimeout(function(){
+              try{document.body.removeChild(ele)}catch(e){}
+              document.body.style.overflow = ''
+            },animation*1000)}
+        }
+        
+        const box = {
+          success: (msg)=>{toast(msg,'background:#34a853;padding:10px 20px')},
+          danger: (msg)=>{toast(msg,'background:#dc3545;padding:10px 20px')}
+        }
+    </script>
+</body>
+</html>

@@ -1,0 +1,32 @@
+# 终端初始化配置
+# 设置代理
+export http_proxy=http://127.0.0.1:8888 
+export https_proxy=http://127.0.0.1:8888
+
+alias agent="echo 'windows设置代理： set http_proxy=socks5://172.20.10.2:8888'"
+alias cc="source ~/.bashrc"
+alias edit="vim ~/.bashrc"
+alias list="cat ~/.bashrc | tail -n +8"
+alias dev="npm run dev"
+alias serve="npm run serve"
+alias toend="cd /home/dev/code/server"
+alias tofore="cd /home/dev/code/client"
+alias totriple="cd /home/dev/code/triple"
+alias toagent="cd /home/dev/code/server_ext"
+alias send="toend && dev"
+alias sfore="tofore && dev"
+alias sthree="totriple && serve"
+alias sagent="toagent && dev"
+alias eagent="toagent && code ."
+alias eend="toend && code ."
+alias efore="tofore && code ."
+alias ethree="totriple && code ."
+alias efull="eend && efore"
+alias ewhole="eend && efore && ethree"
+alias delall="ps -ef | grep node | awk '{ print \$2}' | xargs kill -9"
+alias sql="mysql -h 127.0.0.1 -udev -p123456"
+alias db="/opt/zbox/run/mysql/mysql -P 3310 -udev -p123456"
+alias dbout="mysqldump -udev -p123456 dev > dev.sql"
+alias dbin="mysql -udev -p123456 dev < dev.sql"
+alias agent="ssh -NvD 7890 32"
+alias manager="sudo /opt/dmdbms/tool/manager"

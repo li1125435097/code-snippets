@@ -1,0 +1,43 @@
+v=0.0.1
+info:
+	# 部署命令示例  make package v=${v}
+
+server:
+	cd ${v} && cp -r /home/code/dist ./
+	cd ${v} && cp -r /home/code/releaseNote.md ./
+	cd ${v} && rm -fr ./dist/config
+	cd ${v} && tar -zcf server.tar.gz dist
+	cd ${v} && rm -fr dist
+
+client:
+	cd ${v} && cp -r /www/client/dist ./
+	cd ${v} && cp -r /www/client/releaseNote.md ./
+	cd ${v} && tar -zcf ui.tar.gz dist
+	cd ${v} && rm -fr dist
+
+down:
+	umount `df | grep 'UDISK' | awk '{print $$1}'`
+
+move:
+	rm -fr `df | grep 'UDISK' | awk '{print $$6}'`/${v}
+	cp -fr ${v} `df | grep 'Jinke' | awk '{print $$6}'`
+	
+three:
+	cd ${v} && cp -r /www/three/dist ./
+	cd ${v} && cp -r /www/three/releaseNote.md ./
+	cd ${v} && tar -zcf three.tar.gz dist
+	cd ${v} && rm -fr dist
+
+package:
+	# ---------------打包开始----------------
+	rm -fr ${v}
+	mkdir ${v}
+	make server
+	make client
+	make three
+	# ---------------打包结束---------------
+	make move
+	# ---------------移动结束---------------	
+	make down
+	# ---------------卸载结束---------------	
+	date
