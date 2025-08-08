@@ -2,7 +2,7 @@
 
 # 文件监控函数
 watch_file() {
-    local target_file="app.js"
+    local target_file="binding.cc"
     echo "启动监控: 正在监视 $target_file 文件变化 (使用轮询检查)..."
 
     # 获取初始文件修改时间

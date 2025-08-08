@@ -17,7 +17,8 @@ const result = addon.processTypes(
   new ArrayBuffer(16),
   new Uint8Array(4),
   new DataView(new ArrayBuffer(8)),
-  new Map([['k', 'v']])
+  new Map([['k', 'v']]),
+  new Set([1, 2, 3, 'a', 'b']),
 );
 
 console.log(result);

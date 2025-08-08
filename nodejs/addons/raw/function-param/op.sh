@@ -2,6 +2,7 @@
 
 # 文件监控函数
 watch_file() {
+    # local target_file="addon.cc"
     local target_file="addon.cc"
     echo "启动监控: 正在监视 $target_file 文件变化 (使用轮询检查)..."
 
@@ -42,6 +43,9 @@ if [ $# -ne 1 ]; then
     echo "Usage: $0 <build|run|watch>"
     exit 1
 fi
+
+# 终止信号处理
+trap "echo '脚本被强制终止'; exit 1" INT
 
 case $1 in
     "build")

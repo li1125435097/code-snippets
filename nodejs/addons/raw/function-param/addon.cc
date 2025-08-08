@@ -125,32 +125,19 @@ void ProcessTypes(const FunctionCallbackInfo<Value>& args) {
     result->Set(context, gstr(isolate, "dataview_bytes"), Integer::New(isolate, static_cast<int32_t>(dv->ByteLength()))).ToChecked();
   }
 
-  /************** 17. map/set **************/
-  // if (args[16]->IsObject()) {
-  //   Local<Object> obj = args[16].As<Object>();
-  //   Local<String> toString = String::NewFromUtf8(isolate, "toString", NewStringType::kNormal).ToLocalChecked();
-  //   MaybeLocal<Value> maybeMethod = obj->Get(context, toString);
-  //   Local<Function> func;
-  //   if (maybeMethod.ToLocal(&func)) {
-  //     MaybeLocal<Value> maybeResult = func->Call(context, obj, 0, nullptr);
-  //     Local<String> resultStr;
-  //     if (maybeResult.ToLocal(&resultStr)) {
-  //       String::Utf8Value str(isolate, resultStr);
-  //       std::string type(*str);
-  //       if (type == "[object Map]") {
-  //         result->Set(context,
-  //           String::NewFromUtf8(isolate, "collection", NewStringType::kNormal).ToLocalChecked(),
-  //           String::NewFromUtf8(isolate, "map", NewStringType::kNormal).ToLocalChecked()
-  //         ).ToChecked();
-  //       } else if (type == "[object Set]") {
-  //         result->Set(context,
-  //           String::NewFromUtf8(isolate, "collection", NewStringType::kNormal).ToLocalChecked(),
-  //           String::NewFromUtf8(isolate, "set", NewStringType::kNormal).ToLocalChecked()
-  //         ).ToChecked();
-  //       }
-  //     }
-  //   }
-  // }
+  /************** 17. map **************/
+  if (args[16]->IsMap()) {
+    Local<Map> map = args[16].As<Map>();
+    map->Set(context, gstr(isolate,"a"), gstr(isolate,"我改变了")).ToLocalChecked();
+    result->Set(context, gstr(isolate, "map"), map).ToChecked();
+  }
+
+  /************** 18. set **************/
+  if (args[17]->IsSet()) {
+    Local<Set> set = args[17].As<Set>();
+    set->Delete(context, gstr(isolate,"a")).ToChecked();
+    result->Set(context, gstr(isolate, "set"), set).ToChecked();
+  }
 
   // ✅ 返回结果
   args.GetReturnValue().Set(result);

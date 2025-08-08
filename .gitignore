@@ -141,3 +141,4 @@ vite.config.ts.timestamp-*
 # 忽略编译后的文件
 **/target/
 **/build/
+.vscode/
