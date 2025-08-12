@@ -1,0 +1,64 @@
+$ node sqlite3.test.js 
+create table: 3.329ms
+jubingshu: 2  sockets: 0
+{ user: 343000, system: 296000 } heapTotal:9.75MB heapUsed:6.85MB
+Event loop delay : 1.72 ms
+jubingshu: 2  sockets: 0
+{ user: 546000, system: 640000 } heapTotal:15.00MB heapUsed:7.30MB
+Event loop delay : 0.47 ms
+jubingshu: 2  sockets: 0
+{ user: 718000, system: 968000 } heapTotal:15.00MB heapUsed:9.13MB
+Event loop delay : 0.83 ms
+jubingshu: 2  sockets: 0
+{ user: 828000, system: 1375000 } heapTotal:15.75MB heapUsed:9.11MB
+Event loop delay : 0.58 ms
+jubingshu: 2  sockets: 0
+{ user: 921000, system: 1796000 } heapTotal:16.75MB heapUsed:9.53MB
+Event loop delay : 0.49 ms
+jubingshu: 2  sockets: 0
+{ user: 1015000, system: 2265000 } heapTotal:24.50MB heapUsed:5.36MB
+Event loop delay : 0.47 ms
+jubingshu: 2  sockets: 0
+{ user: 1140000, system: 2703000 } heapTotal:24.50MB heapUsed:7.02MB
+Event loop delay : 0.90 ms
+jubingshu: 2  sockets: 0
+{ user: 1250000, system: 3093000 } heapTotal:24.50MB heapUsed:8.63MB
+Event loop delay : 0.49 ms
+insert: 8.626s
+insert multi: 9.172ms
+query: 0.402ms
+[ { 'count(*)': 10000 } ]
+
+
+
+
+$ node sqlite3.alpine.test.js
+create table: 3.092ms
+jubingshu: 2  sockets: 0
+{ user: 375000, system: 296000 } heapTotal:9.75MB heapUsed:5.43MB
+Event loop delay : 0.88 ms
+jubingshu: 2  sockets: 0
+{ user: 609000, system: 640000 } heapTotal:9.75MB heapUsed:5.71MB
+Event loop delay : 0.53 ms
+jubingshu: 2  sockets: 0
+{ user: 687000, system: 1046000 } heapTotal:9.75MB heapUsed:6.00MB
+Event loop delay : 0.69 ms
+jubingshu: 2  sockets: 0
+{ user: 812000, system: 1359000 } heapTotal:9.75MB heapUsed:6.29MB
+Event loop delay : 0.51 ms
+jubingshu: 2  sockets: 0
+{ user: 828000, system: 1828000 } heapTotal:9.75MB heapUsed:6.58MB
+Event loop delay : 0.59 ms
+jubingshu: 2  sockets: 0
+{ user: 875000, system: 2265000 } heapTotal:9.75MB heapUsed:6.86MB
+Event loop delay : 0.53 ms
+jubingshu: 2  sockets: 0
+{ user: 875000, system: 2703000 } heapTotal:7.50MB heapUsed:5.70MB
+Event loop delay : 0.70 ms
+jubingshu: 2  sockets: 0
+{ user: 890000, system: 3218000 } heapTotal:7.50MB heapUsed:5.98MB
+Event loop delay : 0.74 ms
+insert: 8.473s
+insert multi: 8.648ms
+query: 0.099ms
+[ { 'count(*)': '10000' } ]

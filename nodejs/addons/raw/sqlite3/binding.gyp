@@ -2,7 +2,7 @@
   "targets": [
     {
       "target_name": "addon",
-      "sources": [ "uv-cb.cc" ]
+      "sources": [ "uv-promise.cc" ]
     }
   ]
 }

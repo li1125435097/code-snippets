@@ -1,0 +1,27 @@
+$ node sqlite3.alpine.test.js 
+create table: 3.013ms
+insert: 8.462s
+insert multi: 9.375ms
+query: 0.107ms
+[ { 'count(*)': '10000' } ]
+
+$ node sqlite3.alpine.test.js 
+create table: 2.951ms
+insert: 8.482s
+insert multi: 8.999ms
+query: 0.099ms
+[ { 'count(*)': '10000' } ]
+
+$ node sqlite3.test.js
+create table: 3.454ms
+insert: 8.459s
+insert multi: 9.592ms
+query: 0.391ms
+[ { 'count(*)': 10000 } ]
+
+$ node sqlite3.test.js 
+create table: 9.753ms
+insert: 8.645s
+insert multi: 9.164ms
+query: 0.397ms
+[ { 'count(*)': 10000 } ]
